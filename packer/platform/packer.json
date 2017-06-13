@@ -21,7 +21,7 @@
             "ssh_username": "vagrant",
             "ssh_password": "vagrant",
 
-            "http_directory": "{{template_dir}}/http",
+            "http_directory": "{{template_dir}}/../http",
             "output_directory": "{{template_dir}}/output",
 
             "shutdown_command": "echo vagrant | sudo -S shutdown -P now",
@@ -56,11 +56,12 @@
                     "image-type": "machine",
                     "root-device-type": "ebs",
                     "virtualization-type": "hvm",
-                    "name": "*ubuntu-trusty-14.04-amd64-server-*",
+                    "name": "*ubuntu-trusty-14.04-amd64-server-*"
                 },
                 "owners": [ "099720109477" ],
                 "most_recent": true
             },
+            "ssh_username": "ubuntu",
 
             "tags": {
                 "Name": "{{user `role`}}_{{user `version`}}",
@@ -90,8 +91,8 @@
         {
             "type": "vagrant",
             "only": [ "vagrant" ],
-            "keep_input_artifact": true,
-            "output": "{{template_dir}}/output/{{user `role`}}_{{.Provider}}_{{user `version`}}.box"
+            "keep_input_artifact": false,
+            "output": "{{user `role`}}_{{.Provider}}_{{user `version`}}.box"
         }
     ]
 }
