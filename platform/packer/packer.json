@@ -1,6 +1,8 @@
 {
     "variables": {
         "common_dir": "{{env `PACKER_COMMON`}}",
+        "aws_access_key": "{{env `AWS_ACCESS_KEY`}}",
+        "aws_secret_key": "{{env `AWS_SECRET_KEY`}}",
         "role": "travis-platform",
         "version": "{{timestamp}}"
     },
@@ -8,6 +10,7 @@
     "builders": [
         {
             "type": "virtualbox-vagrant",
+            "name": "vagrant",
 
             "box": {
                 "type": "catalog",
@@ -34,6 +37,37 @@
                 "keyboard-configuration/variant=USA console-setup/ask_detect=false ",
                 "initrd=/install/initrd.gz -- <enter>"
             ]
+        },
+        {
+            "type": "amazon-ebs",
+            "name": "aws",
+
+            "ami_name": "Travis Platform {{user `version`}}",
+
+            "access_key": "{{user `aws_access_key`}}",
+            "secret_key": "{{user `aws_secret_key`}}",
+
+            "ebs_optimized": true,
+            "instance_type": "c3.2xlarge",
+            "region": "us-east-1",
+            "source_ami_filter": {
+                "filters": {
+                    "architecture": "x86_64",
+                    "image-type": "machine",
+                    "root-device-type": "ebs",
+                    "virtualization-type": "hvm",
+                    "name": "*ubuntu-trusty-14.04-amd64-server-*",
+                },
+                "owners": [ "099720109477" ],
+                "most_recent": true
+            },
+
+            "tags": {
+                "Name": "{{user `role`}}_{{user `version`}}",
+                "Role": "{{user `role`}}",
+                "Stable": "false",
+                "Version": "{{user `version`}}"
+            }
         }
     ],
 
@@ -55,6 +89,7 @@
     "post-processors": [
         {
             "type": "vagrant",
+            "only": [ "vagrant" ],
             "keep_input_artifact": true,
             "output": "{{template_dir}}/output/{{user `role`}}_{{.Provider}}_{{user `version`}}.box"
         }
