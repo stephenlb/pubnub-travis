@@ -1,55 +1,61 @@
+# ----------------------------------------
+# Module for Travis Platform
+# ----------------------------------------
 
-# Travis Platform Amazon Security Group
-# resource "aws_security_group" "travis-platform" {
-#    name = "${var.role}"
-#    description = "Travis Platform Security Group"
-#    vpc_id = "${data.aws_subnet.travis-platform.vpc_id}"
-#
-#    ingress {
-#        cidr_blocks = [ "${data.aws_subnet.travis-platform.cidr_block}" ]
-#        protocol = "tcp"
-#        from_port =
-#        to_port =
-#    }
-#
-#    egress {
-#
-#    }
-#
-#    tags {
-#        Name = "${var.role}"
-#    }
-#}
+terraform { required_version = ">= 0.9.8" }
 
-# Travis Platform Amazon EC2 Instance
-resource "aws_instance" "travis-platform" {
 
-    # Required Configuration
-    ami = "${data.aws_ami.travis-platform.id}"
-    instance_type = "c3.2xlarge"
+# ----- Variables
 
-    # Optional Configuration
+variable "ami_id"        { }
+variable "count"         { }
+variable "env"           { }
+variable "instance_type" { }
+variable "key_name"      { }
+variable "key_path"      { }
+variable "region"        { }
+varaible "role"          { default = "travis-platform" }
+variable "sg_ids"        { type = "list" }
+variable "subnet_id"     { }
+
+
+# ----- Resources
+
+resource "aws_instance" "platform" {
+    ami                         = "${var.ami_id}"
     associate_public_ip_address = true
-    ebs_optimized = true
-    vpc_security_group_ids = [ "TODO" ]
-    subnet_id = "TODO"
+    count                       = "${var.count}"
+    ebs_optimized               = true
+    instance_type               = "${var.instance_type}"
+    key_name                    = "${var.key_name}"
+    subnet_id                   = "${var.subnet_id}"
+    vpc_security_group_ids      = [ "${var.sg_ids}" ]
 
-    # Lifecycle
+    connection {
+        user        = "ubuntu"
+        private_key = "${file(var.key_path)}"
+    }
+
     lifecycle { create_before_destroy = true }
 
-    # Tagging
     tags {
-        Name = "${format(var.role%dlower(var.env), count.index + 1)}"
-        Role = "${var.role}"
-        CostCenter = "COGS"
-        Department = "Engineering"
+        Name        = "${format(%s%02d.%s, var.role, count.index + 1, var.env)}"
+        Role        = "${var.role}"
+        CostCenter  = "COGS"
+        Department  = "Engineering"
         Environment = "${title(var.env)}"
-        Service = "CICD"
-        Component = "Build"
-        Region = "TODO"
+        Service     = "CICD"
+        Component   = "Build"
+        Region      = "${var.region}"
     }
 
     volume_tags {
-        TODO
+        Role = "${var.role}"
     }
 }
+
+
+# ----- Outputs
+
+output "public_ips"  { value = [ "${aws_instance.platform.*.public_ip}" ] }
+output "private_ips" { value = [ "${aws_instance.platform.*.private_ip}" ] }
