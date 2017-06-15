@@ -16,7 +16,9 @@ variable "platform_count"         { }
 variable "platform_instance_type" { }
 variable "platform_sg_ids"        { }
 
-# TODO: Worker varaibles
+variable "worker_count"         { }
+variable "worker_instance_type" { }
+variable "worker_sg_ids"        { }
 
 
 # ----- Data Sources
@@ -36,17 +38,36 @@ data "aws_ami" "platform" {
 
     filter {
         name   = "tag:Role"
-        values = [ "${var.role}" ]
+        values = [ "travis-platform" ]
     }
 
     # Only stable AMIs are allowed in production
     filter {
         name   = "tag:Stable"
-        values = "${var.env == "production" ? list("true") : list("true", "false")}"
+        values = [ "${var.env == "production" ? list("true") : list("true", "false")}" ]
     }
 }
 
-# TODO: Worker AMI data source
+data "aws_ami" "worker" {
+    most_recent = true
+    owners      = [ "self" ]
+
+    filter {
+        name   = "state"
+        values = [ "available" ]
+    }
+
+    filter {
+        name   = "tag:Role"
+        values = [ "travis-worker" ]
+    }
+
+    # Only stable AMIs are allowed in production
+    filter {
+        name   = "tag:Stable"
+        values = [ "${var.env == "production" ? list("true") : list("true", "false")}" ]
+    }
+}
 
 
 # ----- Resources
@@ -61,12 +82,12 @@ resource "aws_security_group" "allow_travis_workers" {
 }
 
 resource "aws_security_group_rule" "allow_travis_workers" {
-    type              = "ingress"
-    from_port         = 0
-    to_port           = 0
-    protocol          = "-1"
     cidr_blocks       = [ "${module.worker.private_ips}" ]
+    from_port         = 0
+    protocol          = "-1"
     security_group_id = "${aws_security_group.allow_travis_workers.id}"
+    to_port           = 0
+    type              = "ingress"
 }
 
 
@@ -82,18 +103,30 @@ module "platform" {
     key_name      = "${var.key_name}"
     key_path      = "${var.key_path}"
     region        = "${data.aws_region.name}"
-    sg_ids        = [ "${var.platform_sg_ids}" ]
+    sg_ids        = [ "${distinct(concat(var.platform_sg_ids, list(aws_security_group.allow_travis_workers.id)))}" ]
     subnet_id     = "${var.subnet_id}"
 }
 
-# TODO: Worker module
+module "worker" {
+    source = "${path.module}/worker"
+
+    ami_id        = "${data.aws_ami.worker.id}"
+    count         = "${var.worker_count}"
+    env           = "${var.env}"
+    instance_type = "${var.worker_instance_type}"
+    key_name      = "${var.key_name}"
+    key_path      = "${var.key_path}"
+    region        = "${data.aws_region.name}"
+    sg_ids        = [ "${var.worker_sg_ids}" ]
+    subnet_id     = "${var.subnet_id}"
+}
 
 
 # ----- Outputs
 
 output "allow_travis_workers" { value = "${aws_security_group.allow_travis_workers.id}" }
 
+output "platform_private_ips" { value = [ "${module.platform.private_ips}" ] }
 output "platform_public_ips"  { value = [ "${module.platform.public_ips}" ] }
-output "platform_private_ips" { value = [ "${moudle.platform.private_ips}" ] }
 
-# TODO: Worker outputs
+output "worker_private_ips" { value = [ "${module.worker.private_ips}" ] }

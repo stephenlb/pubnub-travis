@@ -1,5 +1,5 @@
 # ----------------------------------------
-# Module for Travis Platform
+# Module for Travis Worker
 # ----------------------------------------
 
 terraform { required_version = ">= 0.9.8" }
@@ -14,16 +14,16 @@ variable "instance_type" { }
 variable "key_name"      { }
 variable "key_path"      { }
 variable "region"        { }
-varaible "role"          { default = "travis-platform" }
+varaible "role"          { default = "travis-worker" }
 variable "sg_ids"        { type = "list" }
 variable "subnet_id"     { }
 
 
 # ----- Resources
 
-resource "aws_instance" "platform" {
+resource "aws_instance" "worker" {
     ami                         = "${var.ami_id}"
-    associate_public_ip_address = true
+    associate_public_ip_address = false
     count                       = "${var.count}"
     ebs_optimized               = true
     instance_type               = "${var.instance_type}"
@@ -55,5 +55,4 @@ resource "aws_instance" "platform" {
 
 # ----- Outputs
 
-output "private_ips" { value = [ "${aws_instance.platform.*.private_ip}" ] }
-output "public_ips"  { value = [ "${aws_instance.platform.*.public_ip}" ] }
+output "private_ips" { value = [ "${aws_instance.worker.*.private_ip}" ] }

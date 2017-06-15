@@ -35,6 +35,38 @@
                 "keyboard-configuration/variant=USA console-setup/ask_detect=false ",
                 "initrd=/install/initrd.gz -- <enter>"
             ]
+        },
+        {
+            "type": "amazon-ebs",
+            "name": "aws",
+
+            "ami_name": "Travis Worker {{user `version`}}",
+
+            "access_key": "{{user `aws_access_key`}}",
+            "secret_key": "{{user `aws_secret_key`}}",
+
+            "ebs_optimized": true,
+            "instance_type": "c3.2xlarge",
+            "region": "us-east-1",
+            "source_ami_filter": {
+                "filters": {
+                    "architecture": "x86_64",
+                    "image-type": "machine",
+                    "root-device-type": "ebs",
+                    "virtualization-type": "hvm",
+                    "name": "*ubuntu-trusty-14.04-amd64-server-*"
+                },
+                "owners": [ "099720109477" ],
+                "most_recent": true
+            },
+            "ssh_username": "ubuntu",
+
+            "tags": {
+                "Name": "{{user `role`}}_{{user `version`}}",
+                "Role": "{{user `role`}}",
+                "Stable": "false",
+                "Version": "{{user `version`}}"
+            }
         }
     ],
 
