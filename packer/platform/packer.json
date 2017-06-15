@@ -4,6 +4,8 @@
         "aws_access_key": "{{env `AWS_ACCESS_KEY_ID`}}",
         "aws_secret_key": "{{env `AWS_SECRET_ACCESS_KEY`}}",
         "aws_instance_type": "",
+        "aws_key_name": "",
+        "aws_key_path": "",
         "aws_region": "",
         "role": "travis-platform",
         "version": "{{timestamp}}"
@@ -44,7 +46,8 @@
             "type": "amazon-ebs",
             "name": "aws",
 
-            "ami_name": "Travis Platform {{user `version`}}",
+            "ami_name": "travis_platform_{{user `version`}}",
+            "ami_description": "Travis Platform {{user `version`}}",
 
             "access_key": "{{user `aws_access_key`}}",
             "secret_key": "{{user `aws_secret_key`}}",
@@ -63,6 +66,8 @@
                 "owners": [ "099720109477" ],
                 "most_recent": true
             },
+            "ssh_keypair_name": "{{user `aws_key_name`}}",
+            "ssh_private_key_file": "{{user `aws_key_path`}}",
             "ssh_username": "ubuntu",
 
             "tags": {
