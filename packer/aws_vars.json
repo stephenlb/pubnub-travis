@@ -1,0 +1,4 @@
+{
+    "aws_instance_type": "c3.2xlarge",
+    "aws_region": "us-west-1"
+}

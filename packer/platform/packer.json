@@ -3,6 +3,8 @@
         "common_dir": "{{env `PACKER_COMMON`}}",
         "aws_access_key": "{{env `AWS_ACCESS_KEY`}}",
         "aws_secret_key": "{{env `AWS_SECRET_KEY`}}",
+        "aws_instance_type": "",
+        "aws_region": "",
         "role": "travis-platform",
         "version": "{{timestamp}}"
     },
@@ -48,8 +50,8 @@
             "secret_key": "{{user `aws_secret_key`}}",
 
             "ebs_optimized": true,
-            "instance_type": "c3.2xlarge",
-            "region": "us-east-1",
+            "instance_type": "{{user `aws_instance_type`}}",
+            "region": "{{user `aws_region`}}",
             "source_ami_filter": {
                 "filters": {
                     "architecture": "x86_64",
