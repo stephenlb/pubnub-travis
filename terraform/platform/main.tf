@@ -14,7 +14,7 @@ variable "instance_type" { }
 variable "key_name"      { }
 variable "key_path"      { }
 variable "region"        { }
-varaible "role"          { default = "travis-platform" }
+variable "role"          { default = "travis-platform" }
 variable "sg_ids"        { type = "list" }
 variable "subnet_id"     { }
 
@@ -37,7 +37,7 @@ resource "aws_instance" "platform" {
     }
 
     tags {
-        Name        = "${format(%s%02d.%s, var.role, count.index + 1, var.env)}"
+        Name        = "${format("%s%02d.%s", var.role, count.index + 1, var.env)}"
         Role        = "${var.role}"
         CostCenter  = "COGS"
         Department  = "Engineering"

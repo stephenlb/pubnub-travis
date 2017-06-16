@@ -94,7 +94,7 @@ resource "aws_security_group_rule" "allow_travis_workers" {
 # ----- Modules
 
 module "platform" {
-    source = "${path.module}/platform"
+    source = "./platform"
 
     ami_id        = "${data.aws_ami.platform.id}"
     count         = "${var.platform_count}"
@@ -102,13 +102,13 @@ module "platform" {
     instance_type = "${var.platform_instance_type}"
     key_name      = "${var.key_name}"
     key_path      = "${var.key_path}"
-    region        = "${data.aws_region.name}"
+    region        = "${data.aws_region.current.name}"
     sg_ids        = [ "${distinct(concat(var.platform_sg_ids, list(aws_security_group.allow_travis_workers.id)))}" ]
     subnet_id     = "${var.subnet_id}"
 }
 
 module "worker" {
-    source = "${path.module}/worker"
+    source = "./worker"
 
     ami_id        = "${data.aws_ami.worker.id}"
     count         = "${var.worker_count}"
@@ -116,7 +116,7 @@ module "worker" {
     instance_type = "${var.worker_instance_type}"
     key_name      = "${var.key_name}"
     key_path      = "${var.key_path}"
-    region        = "${data.aws_region.name}"
+    region        = "${data.aws_region.current.name}"
     sg_ids        = [ "${var.worker_sg_ids}" ]
     subnet_id     = "${var.subnet_id}"
 }

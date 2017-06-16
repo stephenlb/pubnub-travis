@@ -1,6 +1,9 @@
 ## Vagrant
 .vagrant
 
+## Terraform
+.terraform
+
 ## Packer Output
 packer_cache/
 *.box
