@@ -14,11 +14,11 @@ variable "subnet_id" { }
 
 variable "platform_count"         { }
 variable "platform_instance_type" { }
-variable "platform_sg_ids"        { }
+variable "platform_sg_ids"        { type = "list" }
 
 variable "worker_count"         { }
 variable "worker_instance_type" { }
-variable "worker_sg_ids"        { }
+variable "worker_sg_ids"        { type = "list" }
 
 
 # ----- Data Sources
