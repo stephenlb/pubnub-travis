@@ -130,3 +130,4 @@ output "platform_private_ips" { value = [ "${module.platform.private_ips}" ] }
 output "platform_public_ips"  { value = [ "${module.platform.public_ips}" ] }
 
 output "worker_private_ips" { value = [ "${module.worker.private_ips}" ] }
+output "worker_public_ips"  { value = [ "${module.worker.public_ips}" ] }

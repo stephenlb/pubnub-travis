@@ -23,7 +23,7 @@ variable "subnet_id"     { }
 
 resource "aws_instance" "worker" {
     ami                         = "${var.ami_id}"
-    associate_public_ip_address = false
+    associate_public_ip_address = true
     count                       = "${var.count}"
     ebs_optimized               = true
     instance_type               = "${var.instance_type}"
@@ -56,3 +56,4 @@ resource "aws_instance" "worker" {
 # ----- Outputs
 
 output "private_ips" { value = [ "${aws_instance.worker.*.private_ip}" ] }
+output "public_ips"  { value = [ "${aws_instance.worker.*.public_ip}" ] }
