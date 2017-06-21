@@ -23,9 +23,7 @@ variable "worker_sg_ids"        { type = "list" }
 
 # ----- Data Sources
 
-data "aws_region" "current" {
-    current = true
-}
+data "aws_region" "current" { current = true }
 
 data "aws_ami" "platform" {
     most_recent = true
@@ -76,18 +74,17 @@ resource "aws_security_group" "allow_travis_workers" {
     name        = "allow_travis_workers"
     description = "Allow Travis Workers"
 
-    tags {
-        Name = "allow_travis_workers"
-    }
+    tags { Name = "allow_travis_workers" }
 }
 
 resource "aws_security_group_rule" "allow_travis_workers" {
-    cidr_blocks       = [ "${module.worker.private_ips}" ]
-    from_port         = 0
-    protocol          = "-1"
-    security_group_id = "${aws_security_group.allow_travis_workers.id}"
-    to_port           = 0
     type              = "ingress"
+    security_group_id = "${aws_security_group.allow_travis_workers.id}"
+
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = [ "${module.worker.private_ips}" ]
 }
 
 

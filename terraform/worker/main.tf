@@ -47,9 +47,7 @@ resource "aws_instance" "worker" {
         Region      = "${var.region}"
     }
 
-    volume_tags {
-        Role = "${var.role}"
-    }
+    volume_tags { Role = "${var.role}" }
 }
 
 
