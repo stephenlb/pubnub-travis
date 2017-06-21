@@ -41,10 +41,10 @@ data "aws_ami" "platform" {
         values = [ "travis-platform" ]
     }
 
-    # Only stable AMIs are allowed in production
+    # Only allow AMIs tagged for this environment
     filter {
-        name   = "tag:Stable"
-        values = [ "${var.env == "production" ? list("true") : list("true", "false")}" ]
+        name = "tag:${title(var.env)}"
+        values = [ "true" ]
     }
 }
 
@@ -62,10 +62,10 @@ data "aws_ami" "worker" {
         values = [ "travis-worker" ]
     }
 
-    # Only stable AMIs are allowed in production
+    # Only allow AMIs tagged for this environment
     filter {
-        name   = "tag:Stable"
-        values = [ "${var.env == "production" ? list("true") : list("true", "false")}" ]
+        name = "tag:${title(var.env)}"
+        values = [ "true" ]
     }
 }
 

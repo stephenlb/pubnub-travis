@@ -54,6 +54,7 @@
             "secret_key": "{{user `aws_secret_key`}}",
 
             "ebs_optimized": true,
+            "enhanced_networking": true,
             "instance_type": "m4.large",
             "region": "{{user `aws_region`}}",
             "source_ami_filter": {
@@ -74,11 +75,36 @@
             "subnet_id": "{{user `aws_subnet_id`}}",
             "vpc_id": "{{user `aws_vpc_id`}}",
 
+            "ami_block_device_mappings": [{
+                "device_name": "/dev/sda1",
+                "volume_size": "40",
+                "volume_type": "gp2",
+                "delete_on_termination": true
+            }],
+
+            "launch_block_device_mappings": [{
+                "device_name": "/dev/sda1",
+                "volume_size": "40",
+                "volume_type": "gp2",
+                "delete_on_termination": true
+            }],
+
+            "run_tags": {
+                "Name": "Packer Builder",
+                "Role": "{{user `role`}}"
+            },
+            "run_volume_tags": {
+                "Name": "Packer Builder",
+                "Role": "{{user `role`}}"
+            },
+
             "tags": {
                 "Name": "{{user `role`}}_{{user `version`}}",
                 "Role": "{{user `role`}}",
-                "Stable": "false",
-                "Version": "{{user `version`}}"
+                "Version": "{{user `version`}}",
+                "Development": "true",
+                "Staging": "false",
+                "Production": "false"
             }
         }
     ],
@@ -88,6 +114,13 @@
             "type": "file",
             "source": "{{template_dir}}/files",
             "destination": "/tmp"
+        },
+        {
+            "type": "shell",
+            "inline": [
+                "sudo apt-get update",
+                "sudo apt-get upgrade -y"
+            ]
         },
         {
             "type": "shell",
