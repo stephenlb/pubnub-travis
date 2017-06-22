@@ -2,7 +2,7 @@
 
 VERSION ?= $(shell git describe)
 SSH_KEY_NAME ?= pubnub-2017-q1
-SSH_KEY_PATH ?= ~/.ssh/$(SSH_KEY_NAME).key
+SSH_KEY_PATH ?= $(HOME)/.ssh/$(SSH_KEY_NAME).key
 
 COMMON_SRC = $(shell find packer -type f ! -path "packer/platform/*" ! -path "packer/worker/*")
 PLATFORM_SRC = $(shell find packer/platform -type f)
