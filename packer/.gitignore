@@ -3,6 +3,3 @@ output/
 
 ## Travis Liscence
 platform/files/*.rli
-
-## Local Variables
-local_vars.json
