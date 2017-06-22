@@ -2,6 +2,6 @@
     "aws_key_name": "",
     "aws_key_path": "",
     "aws_region": "us-west-1",
-    "aws_subnet_id": "",
-    "aws_vpc_id": ""
+    "aws_subnet_id": "subnet-5c28d904",
+    "aws_vpc_id": "vpc-b9bca5dc"
 }
