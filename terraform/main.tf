@@ -7,14 +7,23 @@ terraform { required_version = ">= 0.9.8" }
 
 # ----- Variables
 
-variable "env"       { }
-variable "key_name"  { }
-variable "key_path"  { }
-variable "subnet_id" { }
+variable "env"               { }
+variable "rabbitmq_password" { }
+variable "ssh_key_name"      { }
+variable "ssh_key_path"      { }
+variable "subnet_id"         { }
 
-variable "platform_count"         { }
-variable "platform_instance_type" { }
-variable "platform_sg_ids"        { type = "list" }
+variable "platform_admin_password"       { }
+variable "platform_count"                { }
+variable "platform_fqdn"                 { }
+variable "platform_github_client_id"     { }
+variable "platform_github_client_secret" { }
+variable "platform_instance_type"        { }
+variable "platform_librato_enabled"      { default = "false" }
+variable "platform_librato_email"        { default = "" }
+variable "platform_librato_token"        { default = "" }
+variable "platform_replicated_log_level" { default = "debug" }
+variable "platform_sg_ids"               { type = "list" }
 
 variable "worker_count"         { }
 variable "worker_instance_type" { }
@@ -97,11 +106,22 @@ module "platform" {
     count         = "${var.platform_count}"
     env           = "${var.env}"
     instance_type = "${var.platform_instance_type}"
-    key_name      = "${var.key_name}"
-    key_path      = "${var.key_path}"
+    ssh_key_name  = "${var.ssh_key_name}"
+    ssh_key_path  = "${var.ssh_key_path}"
     region        = "${data.aws_region.current.name}"
     sg_ids        = [ "${distinct(concat(var.platform_sg_ids, list(aws_security_group.allow_travis_workers.id)))}" ]
     subnet_id     = "${var.subnet_id}"
+
+    # Template Variables
+    admin_password       = "${var.platform_admin_password}"
+    fqdn                 = "${var.platform_fqdn}"
+    github_client_id     = "${var.platform_github_client_id}"
+    github_client_secret = "${var.platform_github_client_secret}"
+    librato_enabled      = "${var.platform_librato_enabled}"
+    librato_email        = "${var.platform_librato_email}"
+    librato_token        = "${var.platform_librato_token}"
+    rabbitmq_password    = "${var.rabbitmq_password}"
+    replicated_log_level = "${var.platform_replicated_log_level}"
 }
 
 module "worker" {
@@ -111,11 +131,15 @@ module "worker" {
     count         = "${var.worker_count}"
     env           = "${var.env}"
     instance_type = "${var.worker_instance_type}"
-    key_name      = "${var.key_name}"
-    key_path      = "${var.key_path}"
+    ssh_key_name  = "${var.ssh_key_name}"
+    ssh_key_path  = "${var.ssh_key_path}"
     region        = "${data.aws_region.current.name}"
     sg_ids        = [ "${var.worker_sg_ids}" ]
     subnet_id     = "${var.subnet_id}"
+
+    # Template Variables
+    platform_fqdn     = "${var.platform_fqdn}"
+    rabbitmq_password = "${var.rabbitmq_password}"
 }
 
 
