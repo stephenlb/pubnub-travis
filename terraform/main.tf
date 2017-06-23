@@ -11,6 +11,8 @@ variable "env"               { }
 variable "rabbitmq_password" { }
 variable "ssh_key_name"      { }
 variable "ssh_key_path"      { }
+variable "ssl_key_path"      { }
+variable "ssl_cert_path"     { }
 variable "subnet_id"         { }
 
 variable "platform_admin_password"       { }
@@ -108,6 +110,8 @@ module "platform" {
     instance_type = "${var.platform_instance_type}"
     ssh_key_name  = "${var.ssh_key_name}"
     ssh_key_path  = "${var.ssh_key_path}"
+    ssl_key_path  = "${var.ssl_key_path}"
+    ssl_cert_path = "${var.ssl_cert_path}"
     region        = "${data.aws_region.current.name}"
     sg_ids        = [ "${distinct(concat(var.platform_sg_ids, list(aws_security_group.allow_travis_workers.id)))}" ]
     subnet_id     = "${var.subnet_id}"
