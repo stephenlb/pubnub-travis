@@ -2,7 +2,7 @@
 # Module for Travis Worker
 # ----------------------------------------
 
-terraform { required_version = ">= 0.9.8" }
+terraform { required_version = "= 0.9.6" }
 
 
 # ----- Variables
