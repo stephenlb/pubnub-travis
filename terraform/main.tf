@@ -9,6 +9,7 @@ terraform { required_version = "= 0.9.6" }
 
 variable "env"               { }
 variable "rabbitmq_password" { }
+variable "route53_zone_id"   { }
 variable "ssh_key_name"      { }
 variable "ssh_key_path"      { }
 variable "ssl_key_path"      { }
@@ -105,18 +106,19 @@ resource "aws_security_group_rule" "allow_travis_workers" {
 module "platform" {
     source = "./platform"
 
-    ami_id        = "${data.aws_ami.platform.id}"
-    count         = "${var.platform_count}"
-    env           = "${var.env}"
-    instance_type = "${var.platform_instance_type}"
-    ssh_key_name  = "${var.ssh_key_name}"
-    ssh_key_path  = "${var.ssh_key_path}"
-    ssl_key_path  = "${var.ssl_key_path}"
-    ssl_cert_path = "${var.ssl_cert_path}"
-    region        = "${data.aws_region.current.name}"
-    sg_ids        = [ "${distinct(concat(var.platform_sg_ids, list(aws_security_group.allow_travis_workers.id)))}" ]
-    sub_domain    = "${var.sub_domain}"
-    subnet_id     = "${var.subnet_id}"
+    ami_id          = "${data.aws_ami.platform.id}"
+    count           = "${var.platform_count}"
+    env             = "${var.env}"
+    instance_type   = "${var.platform_instance_type}"
+    region          = "${data.aws_region.current.name}"
+    route53_zone_id = "${var.route53_zone_id}"
+    ssh_key_name    = "${var.ssh_key_name}"
+    ssh_key_path    = "${var.ssh_key_path}"
+    ssl_key_path    = "${var.ssl_key_path}"
+    ssl_cert_path   = "${var.ssl_cert_path}"
+    sg_ids          = [ "${distinct(concat(var.platform_sg_ids, list(aws_security_group.allow_travis_workers.id)))}" ]
+    sub_domain      = "${var.sub_domain}"
+    subnet_id       = "${var.subnet_id}"
 
     # Template Variables
     admin_password       = "${var.platform_admin_password}"
@@ -133,16 +135,17 @@ module "platform" {
 module "worker" {
     source = "./worker"
 
-    ami_id        = "${data.aws_ami.worker.id}"
-    count         = "${var.worker_count}"
-    env           = "${var.env}"
-    instance_type = "${var.worker_instance_type}"
-    ssh_key_name  = "${var.ssh_key_name}"
-    ssh_key_path  = "${var.ssh_key_path}"
-    region        = "${data.aws_region.current.name}"
-    sg_ids        = [ "${var.worker_sg_ids}" ]
-    sub_domain    = "${var.sub_domain}"
-    subnet_id     = "${var.subnet_id}"
+    ami_id          = "${data.aws_ami.worker.id}"
+    count           = "${var.worker_count}"
+    env             = "${var.env}"
+    instance_type   = "${var.worker_instance_type}"
+    ssh_key_name    = "${var.ssh_key_name}"
+    ssh_key_path    = "${var.ssh_key_path}"
+    region          = "${data.aws_region.current.name}"
+    route53_zone_id = "${var.route53_zone_id}"
+    sg_ids          = [ "${var.worker_sg_ids}" ]
+    sub_domain      = "${var.sub_domain}"
+    subnet_id       = "${var.subnet_id}"
 
     # Template Variables
     platform_fqdn     = "${var.platform_fqdn}"

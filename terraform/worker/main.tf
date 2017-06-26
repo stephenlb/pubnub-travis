@@ -15,6 +15,7 @@ variable "platform_fqdn"     { }
 variable "rabbitmq_password" { }
 variable "region"            { }
 variable "role"              { default = "travis-worker" }
+variable "route53_zone_id"   { }
 variable "sg_ids"            { type = "list" }
 variable "ssh_key_name"      { }
 variable "ssh_key_path"      { }
@@ -83,6 +84,15 @@ resource "aws_instance" "worker" {
             "sudo shutdown -r now"
         ]
     }
+}
+
+resource "aws_route53_record" "worker" {
+    count = "${var.count}"
+    zone_id = "${var.route53_zone_id}"
+    name = "${format("${var.role}%d", count.index + 1)}"
+    type = "A"
+    ttl = "300"
+    records = [ "${aws_instance.worker.*.public_ip[count.index]}" ]
 }
 
 

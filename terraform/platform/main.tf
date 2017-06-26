@@ -7,19 +7,20 @@ terraform { required_version = "= 0.9.6" }
 
 # ----- Variables
 
-variable "ami_id"        { }
-variable "count"         { }
-variable "env"           { }
-variable "instance_type" { }
-variable "region"        { }
-variable "role"          { default = "travis-platform" }
-variable "sg_ids"        { type = "list" }
-variable "ssh_key_name"  { }
-variable "ssh_key_path"  { }
-variable "ssl_key_path"  { }
-variable "ssl_cert_path" { }
-variable "sub_domain"    { }
-variable "subnet_id"     { }
+variable "ami_id"          { }
+variable "count"           { }
+variable "env"             { }
+variable "instance_type"   { }
+variable "region"          { }
+variable "role"            { default = "travis-platform" }
+variable "route53_zone_id" { }
+variable "sg_ids"          { type = "list" }
+variable "ssh_key_name"    { }
+variable "ssh_key_path"    { }
+variable "ssl_key_path"    { }
+variable "ssl_cert_path"   { }
+variable "sub_domain"      { }
+variable "subnet_id"       { }
 
 # Template Variables
 variable "admin_password"       { }
@@ -124,6 +125,15 @@ resource "aws_instance" "platform" {
             "sudo shutdown -r now"
         ]
     }
+}
+
+resource "aws_route53_record" "platform" {
+    count = "${var.count}"
+    zone_id = "${var.route53_zone_id}"
+    name = "${format("${var.role}%d", count.index + 1)}"
+    type = "A"
+    ttl = "300"
+    records = [ "${aws_instance.platform.*.public_ip[count.index]}" ]
 }
 
 
