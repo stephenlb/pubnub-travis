@@ -18,6 +18,7 @@ variable "ssh_key_name"  { }
 variable "ssh_key_path"  { }
 variable "ssl_key_path"  { }
 variable "ssl_cert_path" { }
+variable "sub_domain"    { }
 variable "subnet_id"     { }
 
 # Template Variables
@@ -88,6 +89,11 @@ resource "aws_instance" "platform" {
 
     volume_tags { Role = "${var.role}" }
 
+    provisioner "file" {
+        content = "${format("%s%d.%s.%s", var.role, count.index + 1, var.region, var.sub_domain)}"
+        destination = "/tmp/hostname"
+    }
+
     # Provision SSL Key/Cert Files
     provisioner "file" {
         source      = "${var.ssl_key_path}"
@@ -110,10 +116,13 @@ resource "aws_instance" "platform" {
         destination = "/opt/pubnub/travis-platform/settings.json"
     }
 
-    # Run The Installer Script
     # TODO: apt-get update && apt-get upgrade
     provisioner "remote-exec" {
-        inline = [ "/opt/pubnub/travis-platform/installer.sh" ]
+        inline = [
+            "sudo mv /tmp/hostname /etc/hostname",
+            "/opt/pubnub/travis-platform/installer.sh",
+            "sudo shutdown -r now"
+        ]
     }
 }
 

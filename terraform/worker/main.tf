@@ -18,6 +18,7 @@ variable "role"              { default = "travis-worker" }
 variable "sg_ids"            { type = "list" }
 variable "ssh_key_name"      { }
 variable "ssh_key_path"      { }
+variable "sub_domain"        { }
 variable "subnet_id"         { }
 
 
@@ -63,6 +64,11 @@ resource "aws_instance" "worker" {
 
     volume_tags { Role = "${var.role}" }
 
+    provisioner "file" {
+        content = "${format("%s%d.%s.%s", var.role, count.index + 1, var.region, var.sub_domain)}"
+        destination = "/tmp/hostname"
+    }
+
     # Provision Template Files
     provisioner "file" {
         content     = "${data.template_file.travis-enterprise.rendered}"
@@ -72,7 +78,10 @@ resource "aws_instance" "worker" {
     # Restart the Worker Service
     # TODO: apt-get update && apt-get upgrade
     provisioner "remote-exec" {
-        inline = [ "sudo restart travis-worker" ]
+        inline = [
+            "sudo mv /tmp/hostname /etc/hostname",
+            "sudo shutdown -r now"
+        ]
     }
 }
 

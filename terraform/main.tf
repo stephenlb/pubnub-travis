@@ -13,6 +13,7 @@ variable "ssh_key_name"      { }
 variable "ssh_key_path"      { }
 variable "ssl_key_path"      { }
 variable "ssl_cert_path"     { }
+variable "sub_domain"        { }
 variable "subnet_id"         { }
 
 variable "platform_admin_password"       { }
@@ -114,6 +115,7 @@ module "platform" {
     ssl_cert_path = "${var.ssl_cert_path}"
     region        = "${data.aws_region.current.name}"
     sg_ids        = [ "${distinct(concat(var.platform_sg_ids, list(aws_security_group.allow_travis_workers.id)))}" ]
+    sub_domain    = "${var.sub_domain}"
     subnet_id     = "${var.subnet_id}"
 
     # Template Variables
@@ -139,6 +141,7 @@ module "worker" {
     ssh_key_path  = "${var.ssh_key_path}"
     region        = "${data.aws_region.current.name}"
     sg_ids        = [ "${var.worker_sg_ids}" ]
+    sub_domain    = "${var.sub_domain}"
     subnet_id     = "${var.subnet_id}"
 
     # Template Variables
