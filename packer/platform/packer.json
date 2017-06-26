@@ -102,9 +102,9 @@
                 "Name": "{{user `role`}}_{{user `version`}}",
                 "Role": "{{user `role`}}",
                 "Version": "{{user `version`}}",
-                "Development": "true",
+                "Dev": "true",
                 "Staging": "false",
-                "Production": "false"
+                "Prod": "false"
             }
         }
     ],
