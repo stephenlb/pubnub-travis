@@ -65,7 +65,7 @@ resource "aws_instance" "worker" {
     volume_tags { Role = "${var.role}" }
 
     provisioner "file" {
-        content = "${format("%s%d.%s.%s", var.role, count.index + 1, var.region, var.sub_domain)}"
+        content = "${format("%s%d.%s.%s.%s", var.role, count.index + 1, var.env, var.region, var.sub_domain)}"
         destination = "/tmp/hostname"
     }
 
