@@ -121,6 +121,7 @@ resource "aws_instance" "platform" {
     # Move Provisioned Files
     provisioner "remote-exec" {
         inline = [
+            "sudo mkdir -p /opt/pubnub/certs /opt/pubnub/travis-platform",
             "sudo mv /tmp/hostname /etc/hostname",
             "sudo mv /tmp/ssl.key /opt/pubnub/certs/${var.fqdn}.key",
             "sudo mv /tmp/ssl.crt /opt/pubnub/certs/${var.fqdn}.crt",
@@ -134,7 +135,7 @@ resource "aws_instance" "platform" {
         inline = [
             "sudo apt-get update",
             "sudo apt-get upgrade -y",
-            "/opt/pubnub/travis-platform/installer.sh",
+            "sudo /opt/pubnub/travis-platform/installer.sh no-proxy",
             "sudo shutdown -r now"
         ]
     }
