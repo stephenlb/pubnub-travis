@@ -93,6 +93,7 @@ resource "aws_security_group" "allow_travis_workers" {
 }
 
 resource "aws_security_group_rule" "allow_travis_workers" {
+    count = "${var.worker_count > 0 ? 1 : 0}"
     type              = "ingress"
     security_group_id = "${aws_security_group.allow_travis_workers.id}"
 
