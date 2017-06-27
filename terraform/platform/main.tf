@@ -78,7 +78,7 @@ resource "aws_instance" "platform" {
     }
 
     tags {
-        Name        = "${format("%s%02d.%s", var.role, count.index + 1, var.env)}"
+        Name        = "${format("%s%d.%s", var.role, count.index + 1, var.env)}"
         Role        = "${var.role}"
         CostCenter  = "COGS"
         Department  = "Engineering"
