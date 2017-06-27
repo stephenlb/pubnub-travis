@@ -90,6 +90,7 @@ resource "aws_instance" "platform" {
 
     volume_tags { Role = "${var.role}" }
 
+    # Provision Hostname File
     provisioner "file" {
         content = "${format("%s%d.%s.%s.%s", var.role, count.index + 1, var.env, var.region, var.sub_domain)}"
         destination = "/tmp/hostname"
@@ -98,29 +99,41 @@ resource "aws_instance" "platform" {
     # Provision SSL Key/Cert Files
     provisioner "file" {
         source      = "${var.ssl_key_path}"
-        destination = "/opt/pubnub/certs/${var.fqdn}.key"
+        destination = "/tmp/ssl.key"
     }
 
     provisioner "file" {
         source      = "${var.ssl_cert_path}"
-        destination = "/opt/pubnub/certs/${var.fqdn}.crt"
+        destination = "/tmp/ssl.crt"
     }
 
     # Provision Template Files
     provisioner "file" {
         content     = "${data.template_file.replicated.rendered}"
-        destination = "/etc/replicated.conf"
+        destination = "/tmp/replicated.conf"
     }
 
     provisioner "file" {
         content     = "${data.template_file.settings.rendered}"
-        destination = "/opt/pubnub/travis-platform/settings.json"
+        destination = "/tmp/settings.json"
     }
 
-    # TODO: apt-get update && apt-get upgrade
+    # Move Provisioned Files
     provisioner "remote-exec" {
         inline = [
             "sudo mv /tmp/hostname /etc/hostname",
+            "sudo mv /tmp/ssl.key /opt/pubnub/certs/${var.fqdn}.key",
+            "sudo mv /tmp/ssl.crt /opt/pubnub/certs/${var.fqdn}.crt",
+            "sudo mv /tmp/replicated.conf /etc/replicated.conf",
+            "sudo mv /tmp/settings.json /opt/pubnub/travis-platform/settings.json"
+        ]
+    }
+
+    # Bootstrap
+    provisioner "remote-exec" {
+        inline = [
+            "sudo apt-get update",
+            "sudo apt-get upgrade -y",
             "/opt/pubnub/travis-platform/installer.sh",
             "sudo shutdown -r now"
         ]

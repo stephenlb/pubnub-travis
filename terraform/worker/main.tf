@@ -65,6 +65,7 @@ resource "aws_instance" "worker" {
 
     volume_tags { Role = "${var.role}" }
 
+    # Provision Hostname File
     provisioner "file" {
         content = "${format("%s%d.%s.%s.%s", var.role, count.index + 1, var.env, var.region, var.sub_domain)}"
         destination = "/tmp/hostname"
@@ -73,14 +74,21 @@ resource "aws_instance" "worker" {
     # Provision Template Files
     provisioner "file" {
         content     = "${data.template_file.travis-enterprise.rendered}"
-        destination = "/etc/default/travis-enterprise"
+        destination = "/tmp/travis-enterprise"
     }
 
-    # Restart the Worker Service
-    # TODO: apt-get update && apt-get upgrade
+    # Move Provisioned Files
     provisioner "remote-exec" {
         inline = [
             "sudo mv /tmp/hostname /etc/hostname",
+            "sudo mv /tmp/travis-enterprise /etc/default/travis-enterprise"
+        ]
+    }
+
+    # Bootstrap
+    # TODO: apt-get update && apt-get upgrade (pending apt hold on travis worker packer build)
+    provisioner "remote-exec" {
+        inline = [
             "sudo shutdown -r now"
         ]
     }
