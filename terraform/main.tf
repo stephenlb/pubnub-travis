@@ -16,6 +16,7 @@ variable "ssl_key_path"      { }
 variable "ssl_cert_path"     { }
 variable "sub_domain"        { }
 variable "subnet_id"         { }
+variable "vpc_id"            { }
 
 variable "platform_admin_password"       { }
 variable "platform_count"                { }
@@ -86,6 +87,7 @@ data "aws_ami" "worker" {
 resource "aws_security_group" "allow_travis_workers" {
     name        = "allow_travis_workers"
     description = "Allow Travis Workers"
+    vpc_id      = "${var.vpc_id}"
 
     tags { Name = "allow_travis_workers" }
 }
