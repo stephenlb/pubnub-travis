@@ -43,6 +43,7 @@ data "template_file" "replicated" {
         platform_admin_password = "${var.admin_password}"
         platform_fqdn           = "${var.fqdn}"
         replicated_log_level    = "${var.replicated_log_level}"
+        bypass_preflight_checks = "false"
     }
 }
 

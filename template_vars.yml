@@ -18,3 +18,6 @@ rabbitmq_password: "password"
 
 # Replicated Log Level
 replicated_log_level: debug
+
+# Bypass Preflight Option
+bypass_preflight_checks: "true"
