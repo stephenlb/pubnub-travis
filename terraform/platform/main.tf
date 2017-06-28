@@ -133,6 +133,7 @@ resource "aws_instance" "platform" {
     # Bootstrap
     provisioner "remote-exec" {
         inline = [
+            "sudo sed -i.bak \"s/127.0.0.1 localhost/127.0.0.1 localhost ${format("%s%d.%s.%s.%s", var.role, count.index + 1, var.env, var.region, var.sub_domain)}/g\" /etc/hosts",
             "sudo apt-get update",
             "sudo apt-get upgrade -y",
             "sudo /opt/pubnub/travis-platform/installer.sh no-proxy",
