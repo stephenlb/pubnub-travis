@@ -126,7 +126,10 @@
             "type": "shell",
             "inline": [
                 "sudo mkdir -p /opt/pubnub",
-                "sudo mv /tmp/files /opt/pubnub/travis-platform"
+                "sudo mv /tmp/files /opt/pubnub/travis-platform",
+                "sudo chmod -R 600 /opt/pubnub/travis-platform",
+                "sudo chmod +x /opt/pubnub/travis-platform/installer.sh",
+                "sudo chown -R root:root /opt/pubnub/travis-platform"
             ]
         }
     ],
