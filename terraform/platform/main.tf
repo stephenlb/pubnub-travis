@@ -134,10 +134,10 @@ resource "aws_instance" "platform" {
     # Set File Permissions
     provisioner "remote-exec" {
         inline = [
-            "sudo chmod 600 /opt/pubnub/travis-platform/settings.json",
-            "sudo chown root:root /opt/pubnub/travis-platform/settings.json",
-            "sudo chmod 600 /etc/replicated.conf",
-            "sudo chown root:root /etc/replicated.conf"
+            "sudo chmod 640 /opt/pubnub/travis-platform/settings.json",
+            "sudo chown root:docker /opt/pubnub/travis-platform/settings.json",
+            "sudo chmod 640 /etc/replicated.conf",
+            "sudo chown root:docker /etc/replicated.conf"
         ]
     }
 
