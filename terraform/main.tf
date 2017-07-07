@@ -100,7 +100,7 @@ resource "aws_security_group_rule" "allow_travis_workers" {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = [ "${module.worker.private_ips}" ]
+    cidr_blocks = [ "${formatlist("%s/32", module.worker.private_ips)}" ]
 }
 
 
