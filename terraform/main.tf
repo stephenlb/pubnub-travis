@@ -155,6 +155,23 @@ module "worker" {
     rabbitmq_password = "${var.rabbitmq_password}"
 }
 
+# Private Hosted Zone for Private IPs
+resource "aws_route53_zone" "private" {
+    count   = "${var.platform_count > 0 ? 1 : 0}"
+    comment = "Travis Private Hosted Zone"
+    name    = "${var.platform_fqdn}"
+    vpc_id  = "${var.vpc_id}"
+}
+
+resource "aws_route53_record" "private_platform" {
+    count   = "${var.platform_count > 0 ? 1 : 0}"
+    name    = "${var.platform_fqdn}"
+    records = [ "${module.platform.private_ips}" ]
+    type    = "A"
+    ttl     = "300"
+    zone_id = "${aws_route53_zone.private.zone_id}"
+}
+
 
 # ----- Outputs
 
