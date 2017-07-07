@@ -128,7 +128,7 @@
                 "sudo mkdir -p /opt/pubnub",
                 "sudo mv /tmp/files /opt/pubnub/travis-platform",
                 "sudo /opt/pubnub/travis-platform/installer.sh install-docker-only",
-                "sudo apt-mark hold docker-ce"
+                "sudo apt-mark hold docker-engine"
             ]
         },
         {
