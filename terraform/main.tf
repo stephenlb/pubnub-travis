@@ -182,3 +182,5 @@ output "platform_public_ips"  { value = [ "${module.platform.public_ips}" ] }
 
 output "worker_private_ips" { value = [ "${module.worker.private_ips}" ] }
 output "worker_public_ips"  { value = [ "${module.worker.public_ips}" ] }
+
+output "private_route53_zone_id" { value = "${aws_route53_zone.private.zone_id}" }
