@@ -1,6 +1,5 @@
 {
     "variables": {
-        "common_dir": "{{env `PACKER_COMMON`}}",
         "aws_access_key": "{{env `AWS_ACCESS_KEY_ID`}}",
         "aws_secret_key": "{{env `AWS_SECRET_ACCESS_KEY`}}",
         "aws_key_name": "",
