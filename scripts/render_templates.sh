@@ -5,10 +5,11 @@ set -e
 BASE=$(cd $(dirname ${BASH_SOURCE[0]})/.. && pwd)
 
 OUT_DIR="$BASE/rendered"
-VARS_FILE="$BASE/template_vars.yml"
+VARS_FILE="$BASE/local_config.yml"
 
 command -v hilrunner > /dev/null || {
     echo "Required command 'hilrunner' not found"
+    echo "--> https://github.com/pubnub/hilrunner"
     exit 1
 }
 
