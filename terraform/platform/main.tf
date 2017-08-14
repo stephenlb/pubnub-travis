@@ -179,7 +179,7 @@ resource "aws_route53_record" "platform" {
     name = "${format("${var.role}%d", count.index + 1)}"
     type = "A"
     ttl = "300"
-    record = [ "${data.aws_eip.platform.public_ip}" ]
+    records = [ "${data.aws_eip.platform.public_ip}" ]
 }
 
 
