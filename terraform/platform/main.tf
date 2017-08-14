@@ -21,6 +21,7 @@ variable "ssl_key_path"    { }
 variable "ssl_cert_path"   { }
 variable "sub_domain"      { }
 variable "subnet_id"       { }
+variable "eipalloc_id"     { default = "" }
 
 # Template Variables
 variable "admin_password"       { }
@@ -62,6 +63,12 @@ data "template_file" "settings" {
 
 
 # ----- Resources
+
+resource "aws_eip_association" "platform" {
+    count = "${var.eipalloc_id == "" ? 0 : 1}"
+    instance_id = "${aws_instance.platform.id}"
+    allocation_id = "${var.eipalloc_id}"
+}
 
 resource "aws_instance" "platform" {
     ami                         = "${var.ami_id}"
@@ -168,12 +175,12 @@ resource "aws_route53_record" "platform" {
     name = "${format("${var.role}%d", count.index + 1)}"
     type = "A"
     ttl = "300"
-    records = [ "${aws_instance.platform.*.public_ip[count.index]}" ]
+    records = [ "${var.eipalloc_id == "" ? aws_instance.platform.*.public_ip[count.index] : var.eipalloc_id}" ]
 }
 
 
 # ----- Outputs
 
 output "private_ips" { value = [ "${aws_instance.platform.*.private_ip}" ] }
-output "public_ips"  { value = [ "${aws_instance.platform.*.public_ip}" ] }
+output "public_ips"  { value = [ "${var.eipalloc_id == "" ? var.eipalloc_id : aws_instance.platform.*.public_ip}" ] }
 output "fqdns"       { value = [ "${aws_route53_record.platform.*.fqdn}" ] }
