@@ -184,6 +184,7 @@ module "worker_precise" {
 
     ami_id          = "${data.aws_ami.worker_precise.id}"
     count           = "${lookup(var.worker_count, "precise", 0)}"
+    dist            = "precise"
     env             = "${var.env}"
     instance_type   = "${lookup(var.worker_instance_type, "precise")}"
     ssh_key_name    = "${var.ssh_key_name}"
@@ -205,6 +206,7 @@ module "worker_trusty" {
     ami_id          = "${data.aws_ami.worker_trusty.id}"
     count           = "${lookup(var.worker_count, "trusty", 0)}"
     env             = "${var.env}"
+    dist            = "trusty"
     instance_type   = "${lookup(var.worker_instance_type, "trusty")}"
     ssh_key_name    = "${var.ssh_key_name}"
     ssh_key_path    = "${var.ssh_key_path}"
