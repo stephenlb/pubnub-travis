@@ -33,7 +33,7 @@ clean:		platform.clean		worker/precise.clean	worker/trusty.clean
 platform: $(PLATFORM_BOX)
 worker/precise: $(WORKER_PRECISE_BOX)
 worker/trusty: $(WORKER_TRUSTY_BOX)
-.PHONY: platform worker worker.precise worker.trusty
+.PHONY: platform worker/precise worker/trusty
 
 platform.install worker/precise.install worker/trusty.install: %.install:
 	@./scripts/vagrant_install.sh $*
